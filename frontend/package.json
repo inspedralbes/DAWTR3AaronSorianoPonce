@@ -1,0 +1,33 @@
+{
+  "name": "entrades-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@nuxt/ui": "^2.15.2",
+    "@pinia/nuxt": "^0.5.1",
+    "@pinia/testing": "^1.0.3",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.4",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.8.9",
+    "nuxt": "^3.11.2",
+    "pinia": "^2.1.7",
+    "vitest": "^4.1.4",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "dependencies": {
+    "peerjs": "^1.5.5",
+    "socket.io-client": "^4.7.5"
+  }
+}
