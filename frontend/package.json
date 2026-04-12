@@ -27,7 +27,8 @@
     "vue-router": "^4.3.0"
   },
   "dependencies": {
+    "laravel-echo": "^2.3.4",
     "peerjs": "^1.5.5",
-    "socket.io-client": "^4.7.5"
+    "pusher-js": "^8.5.0"
   }
 }

@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   css: [],
   runtimeConfig: {
     public: {
-      socketUrl: process.env.SOCKET_URL || 'http://localhost:3001'
+      socketUrl: process.env.SOCKET_URL || 'http://localhost:8000'
     }
   }
 })

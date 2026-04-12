@@ -1,74 +1,100 @@
 import { defineStore } from 'pinia'
-import { io } from 'socket.io-client'
+import Echo from 'laravel-echo'
+import Pusher from 'pusher-js'
+import { v4 as uuidv4 } from 'uuid' // Or just generate a random string since we don't have socket.id
 
 export const useTicketStore = defineStore('ticket', {
   state: () => ({
-    socket: null,
+    echo: null,
     socketId: null,
     seats: [], // Llista de seients
-    selectedSeats: [], // IDs de seients que he seleccionat i tinc reservats temporalment
+    selectedSeats: [], // IDs de seients reservats
     eventInfo: null
   }),
 
   actions: {
     initSocket() {
+      if (this.echo) return;
+      
+      this.socketId = Math.random().toString(36).substring(2, 15);
+
+      if (typeof window !== 'undefined') {
+        window.Pusher = Pusher;
+      }
+      
       const config = useRuntimeConfig()
-      this.socket = io(config.public.socketUrl)
-      
-      this.socket.on('connect', () => {
-        this.socketId = this.socket.id
-        console.log('Connectat via Socket.io', this.socketId)
-      })
+      const apiUrl = config.public.socketUrl?.replace(/\/api$/, '') || 'http://localhost:8000'
 
-      this.socket.on('init_seats', (seatsData) => {
-        this.seats = seatsData
+      this.echo = new Echo({
+        broadcaster: 'reverb',
+        key: 'app-key',
+        wsHost: apiUrl.replace(/^https?:\/\//, '').split(':')[0],
+        wsPort: 8080,
+        wssPort: 8080,
+        forceTLS: false,
+        enabledTransports: ['ws', 'wss'],
       })
+    },
 
-      this.socket.on('seat_updated', (update) => {
-        const index = this.seats.findIndex(s => s.id === update.id)
-        if (index !== -1) {
-          this.seats[index].estat = update.estat
-          this.seats[index].socketId = update.socketId
-          this.seats[index].expiresAt = update.expiresAt
-          
-          // Si el seient se m'acaba de caducar (o cancel·lar pel server), el trec de la meva llista
-          if (update.estat === 'Lliure' && this.selectedSeats.includes(update.id)) {
-             this.selectedSeats = this.selectedSeats.filter(id => id !== update.id)
+    async joinEvent(eventId) {
+      if (!this.echo) this.initSocket()
+
+      const config = useRuntimeConfig()
+      try {
+          const data = await $fetch(`${config.public.socketUrl}/api/events/${eventId}`)
+          this.eventInfo = data
+          this.seats = data.seats || []
+      } catch(err){}
+
+      this.echo.channel('event.' + eventId)
+        .listen('.seat.updated', (e) => {
+          const update = e.update;
+          const index = this.seats.findIndex(s => s.id === update.id)
+          if (index !== -1) {
+            this.seats[index].estat = update.estat
+            this.seats[index].socketId = update.socketId
+            this.seats[index].expiresAt = update.expiresAt
+            
+            if (update.estat === 'Lliure' && this.selectedSeats.includes(update.id)) {
+               this.selectedSeats = this.selectedSeats.filter(id => id !== update.id)
+            }
           }
-        }
-      })
-      
-      this.socket.on('reserve_error', (err) => {
-        alert(err.message)
-        // Treure'l de la llista de selecionats localment si hi era
-        this.selectedSeats = this.selectedSeats.filter(id => id !== err.seatId)
-      })
+        })
     },
 
-    joinEvent(eventId) {
-      if (!this.socket) this.initSocket()
-      this.socket.emit('join_event', eventId)
-    },
-
-    toggleSeat(seatId, eventId) {
+    async toggleSeat(seatId, eventId) {
+      const config = useRuntimeConfig()
       const seat = this.seats.find(s => s.id === seatId)
       if (!seat) return
 
       if (seat.estat === 'Lliure') {
-        // Reservar temporalment
-        this.socket.emit('reserve_seat', { eventId, seatId })
-        this.selectedSeats.push(seatId) // afegim localment optimísticament
+        this.selectedSeats.push(seatId) // Optimistic
+        try {
+            await $fetch(`${config.public.socketUrl}/api/seat/reserve`, {
+                method: 'POST',
+                body: { eventId, seatId, socketId: this.socketId }
+            })
+        } catch(err) {
+            this.selectedSeats = this.selectedSeats.filter(id => id !== seatId)
+            alert(err?.data?.error || 'Error reservant el seient')
+        }
       } else if (seat.estat === 'Reservat' && seat.socketId === this.socketId) {
-        // Cancel·lar reserva
-        this.socket.emit('cancel_reserve', { eventId, seatId })
         this.selectedSeats = this.selectedSeats.filter(id => id !== seatId)
-      } else {
-        // Altres casos (reservat per altre, o venut no fer res)
+        try {
+            await $fetch(`${config.public.socketUrl}/api/seat/cancel`, {
+                method: 'POST',
+                body: { eventId, seatId, socketId: this.socketId }
+            })
+        } catch(err) {
+            // Revert on error
+            this.selectedSeats.push(seatId)
+        }
       }
     },
     
     async proceedToBuy(eventId, userData) {
       const config = useRuntimeConfig()
+      const authStore = useAuthStore()
       try {
           const res = await $fetch(`${config.public.socketUrl}/api/buy`, {
               method: 'POST',
@@ -78,7 +104,7 @@ export const useTicketStore = defineStore('ticket', {
                   user: userData
               },
               headers: {
-                  'x-socket-id': this.socketId
+                  'Authorization': `Bearer ${authStore.token}`
               }
           })
           this.selectedSeats = []
