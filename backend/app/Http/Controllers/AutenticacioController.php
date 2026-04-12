@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Usuari;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
+class AutenticacioController extends Controller
 {
     public function register(Request $request)
     {
@@ -17,7 +17,7 @@ class AuthController extends Controller
             'password' => 'required|min:6'
         ]);
 
-        $user = User::create([
+        $user = Usuari::create([
             'nom' => $request->nom,
             'email' => $request->email,
             'contrasenya' => Hash::make($request->password),
@@ -37,7 +37,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = Usuari::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->contrasenya)) {
             return response()->json(['error' => 'Credencials invàlides.'], 401);

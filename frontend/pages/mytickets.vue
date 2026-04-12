@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-950 text-white font-sans selection:bg-purple-500/30">
-    <AppHeader />
+    <CapcaleraWeb />
     
     <main class="max-w-5xl mx-auto px-4 py-12 min-h-[80vh] flex flex-col">
       <div v-if="!auth.user" class="flex flex-col items-center justify-center flex-1 text-center">
@@ -107,11 +107,11 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { useAutenticacioStore } from '@/stores/autenticacio'
 import { useI18nStore } from '@/stores/i18n'
 
 const config = useRuntimeConfig()
-const auth = useAuthStore()
+const auth = useAutenticacioStore()
 const i18n = useI18nStore()
 
 const tickets = ref([])

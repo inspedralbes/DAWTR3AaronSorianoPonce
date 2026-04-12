@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useAuthStore } from '../../stores/auth.js'
+import { useAutenticacioStore } from '../../stores/autenticacio.js'
 
 // Mock `useRuntimeConfig` i `$fetch`
 vi.stubGlobal('useRuntimeConfig', () => ({
@@ -24,7 +24,7 @@ vi.stubGlobal('localStorage', mockLocalStorage)
 // També falsegem `import.meta.client` d'esquemes tipus Nuxt
 vi.stubGlobal('import', { meta: { client: true } })
 
-describe('Pinia Store: auth.js', () => {
+describe('Pinia Store: autenticacio.js', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
@@ -36,14 +36,14 @@ describe('Pinia Store: auth.js', () => {
 
   // 5.3 Inicialització
   it('inicialitza l\'usuari nul·l i el procés de login tancat', () => {
-    const store = useAuthStore()
+    const store = useAutenticacioStore()
     expect(store.user).toBeNull()
     expect(store.isLoginModalOpen).toBe(false)
   })
 
   // 5.3 Inicialització d'estat des de localstorage
   it('reanima l\'usuari des del localstorage a init()', () => {
-    const store = useAuthStore()
+    const store = useAutenticacioStore()
     mockLocalStorage.setItem('tix_user', JSON.stringify({ id: 10, nom: 'Test User' }))
     
     store.init()
@@ -52,7 +52,7 @@ describe('Pinia Store: auth.js', () => {
 
   // 5.3 Accions de l'usuari (Login correcte)
   it('modifica l\'estat de user quan es fa un login correctament', async () => {
-    const store = useAuthStore()
+    const store = useAutenticacioStore()
     // Preparem la resposta simulada del servidor
     mockFetch.mockResolvedValueOnce({
       success: true,
@@ -69,7 +69,7 @@ describe('Pinia Store: auth.js', () => {
 
   // 5.3 Accions de l'usuari (Logout)
   it('borra l\'estat donat al fer logout', () => {
-    const store = useAuthStore()
+    const store = useAutenticacioStore()
     store.user = { id: 1, nom: 'test' }
     
     store.logout()

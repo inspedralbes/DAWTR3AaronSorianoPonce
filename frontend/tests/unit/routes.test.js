@@ -11,7 +11,7 @@ import { describe, it, expect } from 'vitest'
  */
 function getEventRoute(id) {
   if (!id) return null
-  return `/event/${id}`
+  return `/esdeveniment/${id}`
 }
 
 /**
@@ -19,7 +19,7 @@ function getEventRoute(id) {
  */
 function getAdminEventRoute(id) {
   if (!id) return null
-  return `/admin/event/${id}`
+  return `/admin/esdeveniment/${id}`
 }
 
 /**
@@ -55,12 +55,12 @@ function getRedirectPath(path, isAuthenticated) {
 
 describe('getEventRoute - Rutes dinàmiques d\'esdeveniments', () => {
   it('genera correctament la ruta per a un event amb id numèric', () => {
-    expect(getEventRoute(1)).toBe('/event/1')
-    expect(getEventRoute(42)).toBe('/event/42')
+    expect(getEventRoute(1)).toBe('/esdeveniment/1')
+    expect(getEventRoute(42)).toBe('/esdeveniment/42')
   })
 
   it('genera la ruta per a IDs grans (aforament gran)', () => {
-    expect(getEventRoute(9999)).toBe('/event/9999')
+    expect(getEventRoute(9999)).toBe('/esdeveniment/9999')
   })
 
   it('retorna null si l\'id és null o undefined', () => {
@@ -71,7 +71,7 @@ describe('getEventRoute - Rutes dinàmiques d\'esdeveniments', () => {
 
 describe('getAdminEventRoute - Rutes dinàmiques d\'admin (mode lectura)', () => {
   it('genera correctament la ruta de supervisió admin', () => {
-    expect(getAdminEventRoute(3)).toBe('/admin/event/3')
+    expect(getAdminEventRoute(3)).toBe('/admin/esdeveniment/3')
   })
 
   it('retorna null si l\'id no existeix', () => {
@@ -85,15 +85,15 @@ describe('getAdminEventRoute - Rutes dinàmiques d\'admin (mode lectura)', () =>
 
 describe('extractEventId - Extracció de paràmetres d\'URL', () => {
   it('extreu correctament l\'ID d\'una URL d\'event', () => {
-    expect(extractEventId('/event/5')).toBe(5)
+    expect(extractEventId('/esdeveniment/5')).toBe(5)
   })
 
   it('extreu correctament l\'ID d\'una URL d\'admin event', () => {
-    expect(extractEventId('/admin/event/12')).toBe(12)
+    expect(extractEventId('/admin/esdeveniment/12')).toBe(12)
   })
 
   it('retorna null per a una URL sense ID', () => {
-    expect(extractEventId('/event/')).toBeNull()
+    expect(extractEventId('/esdeveniment/')).toBeNull()
     expect(extractEventId('/')).toBeNull()
   })
 
@@ -115,16 +115,16 @@ describe('requiresAuth - Detecció de rutes protegides', () => {
     expect(requiresAuth('/admin')).toBe(true)
   })
 
-  it('marca /admin/event/1 com a ruta protegida', () => {
-    expect(requiresAuth('/admin/event/1')).toBe(true)
+  it('marca /admin/esdeveniment/1 com a ruta protegida', () => {
+    expect(requiresAuth('/admin/esdeveniment/1')).toBe(true)
   })
 
   it('NO marca / com a ruta protegida', () => {
     expect(requiresAuth('/')).toBe(false)
   })
 
-  it('NO marca /event/1 (compra pública) com a ruta protegida', () => {
-    expect(requiresAuth('/event/1')).toBe(false)
+  it('NO marca /esdeveniment/1 (compra pública) com a ruta protegida', () => {
+    expect(requiresAuth('/esdeveniment/1')).toBe(false)
   })
 })
 
@@ -145,7 +145,7 @@ describe('getRedirectPath - Lògica de redirecció', () => {
     expect(getRedirectPath('/', false)).toBe('/')
   })
 
-  it('permet accés lliure a /event/1 sense autenticació', () => {
-    expect(getRedirectPath('/event/1', false)).toBe('/event/1')
+  it('permet accés lliure a /esdeveniment/1 sense autenticació', () => {
+    expect(getRedirectPath('/esdeveniment/1', false)).toBe('/esdeveniment/1')
   })
 })

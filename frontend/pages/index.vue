@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-950 text-white font-sans selection:bg-purple-500/30">
-    <AppHeader transparent />
+    <CapcaleraWeb transparent />
     
     <main class="max-w-7xl mx-auto px-4 py-12">
       <!-- Hero Section -->
@@ -63,7 +63,7 @@ onMounted(() => i18n.init())
 const { data: events, pending } = useFetch(`${config.public.socketUrl}/api/events`)
 
 const goToEvent = (id) => {
-    router.push(`/event/${id}`)
+    router.push(`/esdeveniment/${id}`)
 }
 </script>
 

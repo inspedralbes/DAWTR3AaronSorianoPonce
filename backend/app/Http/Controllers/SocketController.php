@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Seient;
-use App\Events\SeatUpdated;
+use App\Events\SeientActualitzat;
 use Illuminate\Http\Request;
 
 class SocketController extends Controller
@@ -18,7 +18,7 @@ class SocketController extends Controller
             $seient->expires_at = now()->addMinutes(5);
             $seient->save();
 
-            broadcast(new SeatUpdated($request->eventId, $seient))->toOthers();
+            broadcast(new SeientActualitzat($request->eventId, $seient))->toOthers();
             return response()->json(['success' => true]);
         }
         return response()->json(['error' => 'No disponible'], 400);
@@ -34,7 +34,7 @@ class SocketController extends Controller
             $seient->expires_at = null;
             $seient->save();
 
-            broadcast(new SeatUpdated($request->eventId, $seient))->toOthers();
+            broadcast(new SeientActualitzat($request->eventId, $seient))->toOthers();
             return response()->json(['success' => true]);
         }
         return response()->json(['error' => 'No és la teva reserva'], 400);

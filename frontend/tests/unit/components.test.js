@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import CountDown from '../../components/CountDown.vue'
+import CompteEnrere from '../../components/CompteEnrere.vue'
 
-describe('CountDown.vue', () => {
+describe('CompteEnrere.vue', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -16,7 +16,7 @@ describe('CountDown.vue', () => {
     vi.setSystemTime(new Date(10000))
     
     // Expires at 5000 (el passat)
-    const wrapper = mount(CountDown, {
+    const wrapper = mount(CompteEnrere, {
       props: {
         expiresAt: 5000
       }
@@ -30,7 +30,7 @@ describe('CountDown.vue', () => {
     vi.setSystemTime(new Date(10000))
 
     // Volem que faltin 1 minut i 5 segons = 65000 ms -> expiresAt = 75000 ms
-    const wrapper = mount(CountDown, {
+    const wrapper = mount(CompteEnrere, {
       props: {
         expiresAt: 75000
       }
@@ -42,7 +42,7 @@ describe('CountDown.vue', () => {
 
   it('actualitza el temps al passar 1 segon', async () => {
     vi.setSystemTime(new Date(10000))
-    const wrapper = mount(CountDown, {
+    const wrapper = mount(CompteEnrere, {
       props: {
         expiresAt: 20000 // Falten 10 segons = 00:10
       }

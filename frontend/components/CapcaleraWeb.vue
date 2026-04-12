@@ -86,7 +86,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { useAutenticacioStore } from '@/stores/autenticacio'
 import { useI18nStore } from '@/stores/i18n'
 import { useRouter } from 'vue-router'
 
@@ -94,7 +94,7 @@ const props = defineProps({
   transparent: { type: Boolean, default: false }
 })
 
-const auth = useAuthStore()
+const auth = useAutenticacioStore()
 const i18n = useI18nStore()
 const router = useRouter()
 

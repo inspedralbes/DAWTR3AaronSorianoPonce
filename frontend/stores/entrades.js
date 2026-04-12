@@ -3,7 +3,7 @@ import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
 import { v4 as uuidv4 } from 'uuid' // Or just generate a random string since we don't have socket.id
 
-export const useTicketStore = defineStore('ticket', {
+export const useEntradesStore = defineStore('entrades', {
   state: () => ({
     echo: null,
     socketId: null,
@@ -47,7 +47,7 @@ export const useTicketStore = defineStore('ticket', {
       } catch(err){}
 
       this.echo.channel('event.' + eventId)
-        .listen('.seat.updated', (e) => {
+        .listen('.seient.actualitzat', (e) => {
           const update = e.update;
           const index = this.seats.findIndex(s => s.id === update.id)
           if (index !== -1) {
@@ -94,7 +94,7 @@ export const useTicketStore = defineStore('ticket', {
     
     async proceedToBuy(eventId, userData) {
       const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const authStore = useAutenticacioStore()
       try {
           const res = await $fetch(`${config.public.socketUrl}/api/buy`, {
               method: 'POST',

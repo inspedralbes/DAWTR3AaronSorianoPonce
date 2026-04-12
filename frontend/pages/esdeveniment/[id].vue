@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-950 text-white font-sans flex flex-col">
     <!-- Header Temps Real -->
-    <AppHeader>
+    <CapcaleraWeb>
        <template #left>
         <NuxtLink to="/" class="text-gray-400 hover:text-white flex items-center gap-2 transition-colors mr-4">
             <UIcon name="i-heroicons-arrow-left" class="w-5 h-5"/> Tornar
@@ -18,7 +18,7 @@
             <span class="text-xs font-mono text-gray-300">Live</span>
          </div>
        </template>
-    </AppHeader>
+    </CapcaleraWeb>
 
     <main class="flex-1 flex overflow-hidden">
       <!-- Contingut Principal (Mapa de seients) -->
@@ -100,7 +100,7 @@
                     <div class="flex justify-between items-center text-xs text-gray-400 mt-4 border-t border-white/10 pt-2">
                         <div class="flex items-center gap-1 text-yellow-500">
                            <UIcon name="i-heroicons-clock" class="w-4 h-4"/>
-                           <CountDown :expiresAt="seat.expiresAt" />
+                           <CompteEnrere :expiresAt="seat.expiresAt" />
                         </div>
                         <button @click="toggleSeat(seat.id)" class="text-red-400 hover:text-red-300 transition-colors">Alliberar</button>
                     </div>
@@ -155,15 +155,15 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useTicketStore } from '@/stores/ticket'
-import { useAuthStore } from '@/stores/auth'
-import CountDown from '@/components/CountDown.vue'
+import { useEntradesStore } from '@/stores/entrades'
+import { useAutenticacioStore } from '@/stores/autenticacio'
+import CompteEnrere from '@/components/CompteEnrere.vue'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
-const store = useTicketStore()
-const auth = useAuthStore()
+const store = useEntradesStore()
+const auth = useAutenticacioStore()
 
 const eventId = route.params.id
 const { data: event } = useFetch(`${config.public.socketUrl}/api/events/${eventId}`)

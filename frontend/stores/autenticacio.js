@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useRuntimeConfig } from '#app'
 
-export const useAuthStore = defineStore('auth', {
+export const useAutenticacioStore = defineStore('autenticacio', {
   state: () => ({
     user: null, // { id: '..', nom: '...', email: '...' }
     isLoginModalOpen: false,

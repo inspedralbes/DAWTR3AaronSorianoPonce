@@ -8,7 +8,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SeatUpdated implements ShouldBroadcastNow
+class SeientActualitzat implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,6 +33,6 @@ class SeatUpdated implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'seat.updated';
+        return 'seient.actualitzat';
     }
 }

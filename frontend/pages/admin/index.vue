@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto">
       <header class="flex justify-between items-center mb-10">
         <div>
-           <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Admin Dashboard</h1>
+           <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Panell d'Administració</h1>
            <p class="text-gray-400 text-sm mt-1">Visió global en temps real de vendes, clients i sistema operatiu.</p>
         </div>
         <div class="flex items-center gap-4">
@@ -71,7 +71,7 @@
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><UIcon name="i-heroicons-building-office" /> Monitoratge de Sales</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="ev in eventStats" :key="ev.id" @click="router.push('/admin/event/' + ev.id)" class="bg-gray-900 border border-white/5 rounded-xl flex overflow-hidden cursor-pointer hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] transition-all group relative">
+                    <div v-for="ev in eventStats" :key="ev.id" @click="router.push('/admin/esdeveniment/' + ev.id)" class="bg-gray-900 border border-white/5 rounded-xl flex overflow-hidden cursor-pointer hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] transition-all group relative">
                         <!-- Botó per Esborrar Ocult fins hover -->
                         <button @click.stop="deleteEvent(ev.id, ev.nom)" class="absolute top-2 right-2 flex items-center justify-center p-1.5 bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded transition-colors opacity-0 group-hover:opacity-100 z-10" title="Eliminar totalment l'Esdeveniment">
                             <UIcon name="i-heroicons-trash" class="w-4 h-4" />
@@ -255,7 +255,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRuntimeConfig } from '#imports'
 import { useToast } from '#imports'
-import { io } from 'socket.io-client'
+import { useAutenticacioStore } from '@/stores/autenticacio'
+// Eliminat socket.io-client, usarem l'store si calgués presència en el futur
 
 const config = useRuntimeConfig()
 const router = useRouter()
@@ -363,16 +364,10 @@ const confirmDelete = async () => {
 onMounted(() => {
     fetchStats()
     timer = setInterval(fetchStats, 3000)
-    
-    socketAdmin = io(config.public.socketUrl)
-    socketAdmin.on('users_count', (count) => {
-        usersConnected.value = count
-    })
 })
 
 onUnmounted(() => {
     if (timer) clearInterval(timer)
-    if (socketAdmin) socketAdmin.disconnect()
 })
 </script>
 <style scoped>

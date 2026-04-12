@@ -9,7 +9,7 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class AdminController extends Controller
+class AdministracioController extends Controller
 {
     public function globalStats()
     {

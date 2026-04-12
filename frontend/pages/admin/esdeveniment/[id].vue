@@ -11,10 +11,10 @@
       </div>
       <div class="flex items-center gap-4">
          <div class="flex items-center gap-2 bg-blue-900/30 px-4 py-1.5 rounded-full border border-blue-500/30">
-             <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-            </span>
+              <span class="relative flex h-3 w-3">
+               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+               <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+             </span>
             <span class="text-xs font-mono text-blue-300 uppercase tracking-widest font-bold">Mode Radar (Lectura)</span>
          </div>
       </div>
@@ -26,7 +26,11 @@
         <!-- background fx -->
         <div class="absolute inset-0 bg-radial-gradient from-blue-900/10 to-transparent pointer-events-none"></div>
 
-        <div class="w-full max-w-7xl mx-auto px-2 flex-1 flex flex-col justify-center">
+        <div v-if="pending" class="flex-1 flex items-center justify-center">
+             <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <div v-else class="w-full max-w-7xl mx-auto px-2 flex-1 flex flex-col justify-center">
              <div class="text-center mb-10">
                  <div class="w-full h-4 bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 rounded-full mb-4 shadow-[0_0_20px_rgba(255,255,255,0.1)] relative overflow-hidden">
                      <div class="absolute inset-0 bg-white/10 animate-pulse"></div>
@@ -47,7 +51,7 @@
                         class="flex-shrink-0 w-6 h-7 md:w-7 md:h-8 rounded-t px-0.5 flex items-center justify-center font-bold text-[0.6rem] transition-all transform relative ring-1 ring-inset ring-white/10 cursor-default"
                         :class="{
                             'bg-gray-800': seient.estat === 'Lliure',
-                            'bg-yellow-500/80 ring-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]': seient.estat === 'Reservat',
+                            'bg-yellow-500/80 ring-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]': seient.estat === 'Reservat' || (seient.estat === 'Lliure' && seient.socketId),
                             'bg-blue-600 text-white shadow-[0_0_10px_rgba(37,99,235,0.5)] border-blue-400': seient.estat === 'Venut'
                         }"
                         :title="`ID: ${seient.id} | Estat: ${seient.estat}`"
@@ -76,44 +80,26 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { io } from 'socket.io-client'
+import { useEntradesStore } from '@/stores/entrades'
 
 const config = useRuntimeConfig()
 const route = useRoute()
+const store = useEntradesStore()
 const eventId = route.params.id
 
-const { data: event } = useFetch(`${config.public.socketUrl}/api/events/${eventId}`)
-
-const rawSeats = ref([])
-let socket = null
+const { data: event, pending } = useFetch(`${config.public.socketUrl}/api/events/${eventId}`)
 
 onMounted(() => {
-    socket = io(config.public.socketUrl)
-    
-    // Connectar-se a la mateixa sala de l'esdeveniment que els usuaris
-    socket.emit('join_event', eventId)
-
-    socket.on('init_seats', (seats) => {
-        rawSeats.value = seats
-    })
-
-    socket.on('seat_updated', (data) => {
-        const idx = rawSeats.value.findIndex(s => s.id == data.id)
-        if (idx !== -1) {
-            rawSeats.value[idx].estat = data.estat
-        } else {
-            // Si no s'ha carregat trigarà al requery
-        }
-    })
+    store.joinEvent(eventId)
 })
 
 onUnmounted(() => {
-    if (socket) socket.disconnect()
+    // Si marxa, el subscripció al canal es manté fins que el store es destrueixi o marxem d'event
 })
 
-// Agrupació per files
+// Agrupació per files des de l'store
 const seientsPerFila = computed(() => {
-    const list = rawSeats.value || []
+    const list = store.seats || []
     const groups = {}
     list.forEach(item => {
         if (!groups[item.fila]) groups[item.fila] = [];
@@ -131,7 +117,7 @@ const seientsPerFila = computed(() => {
   width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);

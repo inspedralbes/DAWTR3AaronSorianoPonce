@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Seient;
 use App\Models\Reserva;
-use App\Events\SeatUpdated;
+use App\Events\SeientActualitzat;
 use Illuminate\Http\Request;
 
 class ReservaController extends Controller
@@ -45,7 +45,7 @@ class ReservaController extends Controller
             ]);
 
             // Broadcast websocket event
-            broadcast(new SeatUpdated($request->eventId, $seient))->toOthers();
+            broadcast(new SeientActualitzat($request->eventId, $seient))->toOthers();
         }
 
         return response()->json(['success' => true]);
