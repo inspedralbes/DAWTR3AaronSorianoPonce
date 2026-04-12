@@ -2,7 +2,7 @@
 
 **Curs:** 2DAW 2023-2024 (Projecte Transversal)  
 **Autor:** Aaron Soriano Ponce  
-**URL de Producció:** [tixcore.live](https://tixcore.live) (Exemple)
+**URL de Producció:** [tixcore](http://tixcore.daw.inspedralbes.cat/)
 
 ---
 
