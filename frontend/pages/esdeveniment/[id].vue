@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-950 text-white font-sans flex flex-col">
-    <!-- Header Temps Real -->
+    <!-- Capçalera integrada amb la marca del lloc -->
     <CapcaleraWeb>
        <template #left>
         <NuxtLink to="/" class="text-gray-400 hover:text-white flex items-center gap-2 transition-colors mr-4">
@@ -10,23 +10,24 @@
         <h1 class="font-bold text-lg ml-4 truncate max-w-xs" v-if="event">{{ event.nom }}</h1>
        </template>
        <template #center>
+         <!-- Indicador visual de connexió en temps real (Live Status). -->
          <div class="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-full border border-white/5 mx-auto">
-             <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            <span class="text-xs font-mono text-gray-300">Live</span>
-         </div>
+              <span class="relative flex h-3 w-3">
+               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+               <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+             </span>
+             <span class="text-xs font-mono text-gray-300">Live</span>
+          </div>
        </template>
     </CapcaleraWeb>
 
     <main class="flex-1 flex overflow-hidden">
-      <!-- Contingut Principal (Mapa de seients) -->
+      <!-- Secció del Mapa de Seients: Cor de la interacció de l'usuari. -->
       <section class="flex-1 p-8 overflow-auto relative custom-scrollbar">
-        <!-- background fx -->
         <div class="absolute inset-0 bg-radial-gradient from-purple-900/10 to-transparent pointer-events-none"></div>
 
         <div class="w-full max-w-7xl mx-auto px-2">
+             <!-- Representació de l'escenari per donar context espacial. -->
              <div class="text-center mb-10">
                  <div class="w-full h-4 bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 rounded-full mb-4 shadow-[0_0_20px_rgba(255,255,255,0.1)] relative overflow-hidden">
                      <div class="absolute inset-0 bg-white/10 animate-pulse"></div>
@@ -34,15 +35,15 @@
                  <span class="text-sm font-mono text-gray-500 tracking-widest uppercase">Escenari</span>
              </div>
 
-             <!-- Mapa Seients -->
+             <!-- Mapa Dinàmic de Seients: agrupat per files des de l'Store. -->
              <div class="space-y-6">
-                <!-- Agrupats per Fila -->
-                 <div v-for="(seientsFila, filaName) in seientsPerFila" :key="filaName" class="flex justify-center flex-nowrap gap-1 md:gap-[5px] items-center w-full pb-2">
+                  <div v-for="(seientsFila, filaName) in seientsPerFila" :key="filaName" class="flex justify-center flex-nowrap gap-1 md:gap-[5px] items-center w-full pb-2">
                     <div class="flex-shrink-0 w-12 text-right mr-1 flex flex-col justify-center">
                         <span class="text-gray-500 font-bold text-lg leading-none">{{ filaName }}</span>
                         <span class="text-[0.65rem] font-mono text-purple-400 font-bold">{{ preuPerFila(seientsFila) }}€</span>
                     </div>
                     
+                    <!-- Botó de seient: El seu canvi d'estat es gestiona via WebSockets. -->
                     <button 
                         v-for="seient in seientsFila" 
                         :key="seient.id"
@@ -64,10 +65,10 @@
                         <span class="text-gray-500 font-bold text-lg leading-none">{{ filaName }}</span>
                         <span class="text-[0.65rem] font-mono text-purple-400 font-bold">{{ preuPerFila(seientsFila) }}€</span>
                     </div>
-                 </div>
+                  </div>
              </div>
 
-             <!-- Llegenda -->
+             <!-- Llegenda per ajudar l'usuari a interpretar els colors. -->
              <div class="mt-16 flex justify-center gap-8 flex-wrap text-sm text-gray-400">
                 <div class="flex items-center gap-2"><div class="w-4 h-4 bg-gray-800 rounded"></div> Lliure</div>
                 <div class="flex items-center gap-2"><div class="w-4 h-4 bg-purple-600 rounded"></div> La teva reserva</div>
@@ -77,15 +78,17 @@
         </div>
       </section>
 
-      <!-- Sidebar Reserva -->
+      <!-- Sidebar de Checkout: Mòdul lateral per finalitzar la compra. -->
       <aside class="w-full md:w-96 bg-gray-900 border-l border-white/10 p-6 flex flex-col shadow-2xl z-20 transition-transform">
          <h3 class="text-xl font-bold mb-6">La teva Selecció</h3>
          
+         <!-- Estat buit quan no hi ha selecció. -->
          <div v-if="selectedSeatsDetails.length === 0" class="flex-1 flex flex-col items-center justify-center text-gray-500 text-center">
             <UIcon name="i-heroicons-ticket" class="w-16 h-16 mb-4 opacity-20"/>
             <p>Selecciona seients al plànol per començar la teva reserva.</p>
          </div>
 
+         <!-- Llistat de seients seleccionats amb el seu cronòmetre d'expiració. -->
          <div v-else class="flex-1 flex flex-col">
             <div class="space-y-4 flex-1 overflow-auto custom-scrollbar pr-2">
                 <div v-for="seat in selectedSeatsDetails" :key="seat.id" class="p-4 bg-gray-800/50 border border-purple-500/30 rounded-xl relative overflow-hidden group">
@@ -113,16 +116,15 @@
                    <span class="text-purple-400">{{ store.totalPrice.toFixed(2) }}€</span>
                </div>
                
+               <!-- Flux condicionat a l'autenticació: envia l'usuari al login si cal. -->
                <div v-if="auth.user" class="space-y-4">
                    <div class="bg-gray-800/80 border border-white/10 p-3 flex items-center justify-between rounded-lg">
                        <div>
                            <div class="text-xs text-gray-400">Sessió Activa:</div>
                            <div class="text-sm font-bold">{{ auth.user.nom }}</div>
-                           <div class="text-xs text-purple-400">{{ auth.user.email }}</div>
                        </div>
                        <UIcon name="i-heroicons-check-circle" class="w-8 h-8 text-green-500"/>
                    </div>
-                   
                    <UButton @click="handleCheckout" size="xl" block color="purple" :loading="isBuying" :disabled="selectedSeatsDetails.length === 0">
                        Reservar i Pagar amb Targeta
                    </UButton>
@@ -138,7 +140,7 @@
       </aside>
     </main>
 
-    <!-- Modal Èxit -->
+    <!-- Feedback visual d'èxit després de la transacció. -->
     <UModal v-model="showSuccess">
       <div class="p-8 text-center">
         <div class="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -153,7 +155,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useEntradesStore } from '@/stores/entrades'
 import { useAutenticacioStore } from '@/stores/autenticacio'
@@ -172,11 +174,8 @@ const isBuying = ref(false)
 const showSuccess = ref(false)
 
 onMounted(() => {
+    // Ens unim al canal de l'esdeveniment a través de l'Store per rebre canvis Live.
     store.joinEvent(eventId)
-})
-
-onUnmounted(() => {
-    // Si marxa de la pàgina podríem fer un clean up d'id, però ja es fa a nivell socket on disconnect
 })
 
 const isMySeat = (seatId) => {
@@ -187,7 +186,9 @@ const toggleSeat = (seatId) => {
     store.toggleSeat(seatId, eventId)
 }
 
-// Agrupació per files
+/**
+ * Lògica de presentació per agrupar els seients per fila per al renderitzat.
+ */
 const seientsPerFila = computed(() => {
     const list = store.seats || []
     const groups = {}
@@ -195,7 +196,6 @@ const seientsPerFila = computed(() => {
         if (!groups[item.fila]) groups[item.fila] = [];
         groups[item.fila].push(item);
     })
-    // Ordenar per número dinte la fila
     Object.keys(groups).forEach(fila => {
         groups[fila].sort((a,b) => a.numero - b.numero)
     })
@@ -204,7 +204,6 @@ const seientsPerFila = computed(() => {
 
 const preuPerFila = (seients) => {
     if (seients && seients.length > 0) {
-        // Assegurem retornar-ho net en format decimal si cal
         return parseFloat(seients[0].preu).toFixed(2);
     }
     return 0;
@@ -214,6 +213,9 @@ const selectedSeatsDetails = computed(() => {
     return store.selectedSeats.map(id => store.seats.find(s => s.id === id)).filter(Boolean)
 })
 
+/**
+ * Finalitza la compra delegant la lògica de xarxa a l'Store.
+ */
 const handleCheckout = async () => {
     if (!auth.user) {
         auth.openLoginModal()
@@ -233,6 +235,7 @@ const handleCheckout = async () => {
 </script>
 
 <style scoped>
+/* Scrollbar personalitzat per mantenir l'estètica premium del plànol. */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -242,8 +245,5 @@ const handleCheckout = async () => {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 85, 247, 0.5);
 }
 </style>
