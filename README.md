@@ -6,7 +6,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![WebSockets](https://img.shields.io/badge/WebSockets-Reverb-orange?style=for-the-badge)
 
-**Curs:** 2DAW 2023-2024 (Projecte Transversal)  
+**Curs:** 2DAW 2025-2026 (Projecte Transversal)  
 **Autor:** Aaron Soriano Ponce  
 **URL de Producció:** [tixcore.daw.inspedralbes.cat](http://tixcore.daw.inspedralbes.cat/)
 
@@ -164,27 +164,3 @@ porjectofinal/
 2. Instal·la dependències: `npm install`
 3. Executa en mode desenvolupament: `npm run dev`
 4. Obre [http://localhost:3000](http://localhost:3000)
-
----
-
-## 🛠️ Endpoints Principals (API)
-
-| Mètode | Endpoint | Descripció |
-|---|---|---|
-| GET | `/api/esdeveniments` | Llista tots els esdeveniments actius. |
-| GET | `/api/esdeveniments/{id}` | Detall d'un esdeveniment i la seva sala. |
-| POST | `/api/seients/reservar` | Bloqueja un seient temporalment via SocketID. |
-| POST | `/api/pagament` | Processa la compra i genera el ticket. |
-| GET | `/api/usuari/tickets` | Historial de compres de l'usuari. |
-
----
-
-## 🔮 Roadmap / Millores Futures
-- [ ] Integració amb passarel·la de pagament real (Stripe).
-- [ ] Generació de PDF per als tickets.
-- [ ] Aplicació de lectura de QR per als accessos.
-- [ ] Sistema de preus dinàmics segons demanda.
-
----
-
-**Llicència:** Aquest projecte és per a ús acadèmic sota llicència MIT.
